@@ -18,7 +18,7 @@ function sendRequest(currVal) {
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4) {
             if (xmlHttp.status == 200) {
-                currVal.innerHTML = xmlHttp.responseText.splice(2, -2) + ", ";
+                currVal.innerHTML = (xmlHttp.responseText).splice(2, -2) + ", ";
             }
         }
     };
