@@ -67,6 +67,8 @@ input[type=text]:focus, input[type=number]:focus, textarea:focus {
 #sourceURL {
     float: left;
     margin: 0 2px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .mgmntbtns {
@@ -90,6 +92,9 @@ a:hover {
     padding: 2px;
     border-radius: 1px;
     border: 1px solid black;
+}
+
+#qchoice1, #qchoice2, #qchoice3, #qchoice4 {
     cursor: pointer;
 }
 
@@ -107,8 +112,8 @@ a:hover {
     font-size: 300%;
 }
 
-#nextbtn {
-    display: none;
+.btn {
+    display: inline-block;
     text-align: right;
     box-sizing: border-box;
     font-size: 120%;
@@ -121,8 +126,16 @@ a:hover {
     width: 50%;
 }
 
+#nextbtn {
+    display: none;
+}
+
 .nextBtnwrapper {
     text-align: right;
+}
+
+#stats {
+    display: none;
 }
 </style>
 <title>Quiz</title>
@@ -131,7 +144,10 @@ a:hover {
 <div class="infobar">
     <div id="sourceURL"></div>
     <div class="mgmntbtns">
-        <a id="changefileBtn" href="javascript:;">Change JSON file</a>
+        <b id="pts">0</b> pts &middot; 
+        <b id="percentage">0</b>% &middot; 
+        <a id="statsBtn" href="javascript:;">Stats</a> &middot; 
+        <a id="changefileBtn" href="javascript:;">Change JSON file</a> &middot; 
         <a id="syncfileBtn" href="javascript:;">Resync JSON file</a>
     </div>
 </div>
@@ -152,7 +168,18 @@ a:hover {
     <div id="qchoice3" class="choice">C</div>
     <div id="qchoice4" class="choice">D</div>
     <div class="nextBtnwrapper">
-        <div id="nextBtn">Next</div>
+        <div id="nextBtn" class="btn">Next</div>
+    </div>
+</div>
+<div id="stats">
+    <h1>Stats</h1>
+    <div class="choice">Points: <b id="statsPts"></b></div>
+    <div class="choice">Correct Answers: <b id="statsCorrect"></b></div>
+    <div class="choice">Incorrect Answers: <b id="statsIncorrect"></b></div>
+    <div class="choice">Total Answers: <b id="statsTotal"></b></div>
+    <div class="choice">Percentage: <b id="statsPercentage"></b>%</div>
+    <div class="nextBtnwrapper">
+        <div id="resetBtn" class="btn">Reset Stats</div>
     </div>
 </div>
 </div>
@@ -163,6 +190,10 @@ var currentURL;
 var rightAnswerNum;
 var alreadyAnswered = [0,0,0,0];
 var gotRight = false;
+var pts = 0||0;
+var qpts = 100||0;
+var tries = 0;
+var correct = 0;
 
 // Array random element function
 Array.prototype.randomElement = function() {
@@ -178,23 +209,65 @@ Array.prototype.randomElementThatIsntThis = function(notThis) {
     return this[random];
 };
 
+function updateStatsBar() {
+    localStorage.setItem('lastPts', pts);
+    document.getElementById("pts").innerHTML = pts;
+    localStorage.setItem('lastTries', tries);
+    localStorage.setItem('lastCorrect', correct);
+    var percentage = Math.floor(correct/tries*100);
+    document.getElementById("percentage").innerHTML = percentage<=100?percentage:0;
+}
+
+
+function resetStats() {
+    pts = 0;
+    correct = 0;
+    tries = 0;
+    updateStatsBar();
+    showStats();
+}
+
+function showStats() {
+    document.getElementById("errjsonfile").style.display = "none";
+    document.getElementById("question").style.display = "none";
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("stats").style.display = "block";
+    document.getElementById("statsPts").innerHTML = pts;
+    document.getElementById("statsCorrect").innerHTML = correct;
+    document.getElementById("statsIncorrect").innerHTML = tries-correct;
+    document.getElementById("statsTotal").innerHTML = tries;
+    document.getElementById("statsPercentage").innerHTML = correct/tries*100;
+}
+
 function qPick(choice) {
     if(alreadyAnswered[choice-1] || gotRight) return;
 
+    tries++;
     alreadyAnswered[choice-1] = 1;
     if(choice == rightAnswerNum) {
         document.getElementById("qchoice"+choice).className += " correct";
         gotRight = true;
         document.getElementById("nextBtn").style.display = "inline-block";
+        pts = parseInt(pts) + parseInt(qpts);
+        qpts = 100||0;
+        correct++;
     } else {
         document.getElementById("qchoice"+choice).className += " incorrect";
+        qpts = ((qpts-50)>=0)?(qpts-50):qpts||0;
     }
+    updateStatsBar();
 }
 
 function getWord() {
     // yay autocompleted variable names
     var randomIndex = Math.floor(Math.random() * questionsArray.length);
     var randomlyPickedElement = questionsArray[randomIndex];
+    // set visible
+    document.getElementById("errjsonfile").style.display = "none";
+    document.getElementById("question").style.display = "block";
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("stats").style.display = "none";
+    
     // reset everything
     document.getElementById("nextBtn").style.display = "none";
     gotRight = false;
@@ -244,6 +317,7 @@ function verifyJSONFile(text) {
     document.getElementById("errjsonfile").style.display = "none";
     document.getElementById("question").style.display = "block";
     document.getElementById("loading").style.display = "none";
+    document.getElementById("stats").style.display = "none";
     document.getElementById("sourceURL").innerHTML = currentURL;
     getWord();
 }
@@ -252,6 +326,7 @@ function getFile(e) {
     e.preventDefault();
     document.getElementById("question").style.display = "none";
     document.getElementById("errjsonfile").style.display = "none";
+    document.getElementById("stats").style.display = "none";
     document.getElementById("loading").style.display = "block";
     var xmlHttp = new XMLHttpRequest();
     var timeout = function() {
@@ -284,6 +359,7 @@ function changeFile() {
     document.getElementById("errjsonfile").style.display = "block";
     document.getElementById("question").style.display = "none";
     document.getElementById("loading").style.display = "none";
+    document.getElementById("stats").style.display = "none";
     document.getElementById("fname").value = currentURL;
     document.getElementById("errmsg").innerHTML = "Enter JSON file";
     document.getElementById("errdesc").innerHTML = "Please enter the location for a quiz JSON file";
@@ -291,6 +367,8 @@ function changeFile() {
 
 (function() {
     // DOM ready
+    document.getElementById("sourceURL").addEventListener("click", getWord, false);
+    document.getElementById("statsBtn").addEventListener("click", showStats, false);
     document.getElementById("subBtn").addEventListener("click", getFile, false);
     document.getElementById("changefileBtn").addEventListener("click", changeFile, false);
     document.getElementById("syncfileBtn").addEventListener("click", getFile, false);
@@ -299,8 +377,15 @@ function changeFile() {
     document.getElementById("qchoice3").addEventListener("click", function(){qPick(3);}, false);
     document.getElementById("qchoice4").addEventListener("click", function(){qPick(4);}, false);
     document.getElementById("nextBtn").addEventListener("click", getWord, false);
+    document.getElementById("resetBtn").addEventListener("click", resetStats, false);
     var savedURL = localStorage.getItem('lastURL') || "";
     var savedStr = localStorage.getItem('lastJSON') || "";
+
+    pts = localStorage.getItem('lastPts') || 0;
+    tries = localStorage.getItem('lastTries') || 0;
+    correct = localStorage.getItem('lastCorrect') || 0;
+    updateStatsBar();
+    
     // It's empty, don't have to give error
     if (savedStr == "") {
         document.getElementById("errjsonfile").style.display = "block";
