@@ -423,7 +423,7 @@ function changeFile() {
     document.getElementById("preset08").addEventListener("click", function(){presetChoice("08");}, false);
     document.getElementById("preset09").addEventListener("click", function(){presetChoice("09");}, false);
     document.getElementById("preset10").addEventListener("click", function(){presetChoice("10");}, false);
-    document.getElementById("presetAll").addEventListener("click", function(){presetChoice("");}, false);
+    document.getElementById("presetAll").addEventListener("click", function(){presetChoice("All");}, false);
     document.getElementById("nextBtn").addEventListener("click", getWord, false);
     document.getElementById("resetBtn").addEventListener("click", resetStats, false);
     var savedURL = localStorage.getItem('lastURL') || "";
