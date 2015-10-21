@@ -1,0 +1,28 @@
+<html>
+<head><title>Convert</title></head>
+<body>
+<div id="vocab01.json" class="toCombine"></div>
+<div id="vocab02.json" class="toCombine"></div>
+<div id="vocab03.json" class="toCombine"></div>
+<div id="vocab04.json" class="toCombine"></div>
+<div id="vocab05.json" class="toCombine"></div>
+<div id="vocab06.json" class="toCombine"></div>
+<div id="vocab07.json" class="toCombine"></div>
+<div id="vocab08.json" class="toCombine"></div>
+<div id="vocab09.json" class="toCombine"></div>
+<div id="vocab10.json" class="toCombine"></div>
+<script>
+function combine() {
+    var dataIn = document.getElementById("from").value;
+    var dataOut = dataIn.replace(/\* (.*) - (.*)/gmi, "{\"word\":\"$1\", \"definition\":\"$2\"},");
+    document.getElementById("to").value = "[\n"+dataOut.slice(0, -1)+"\n]";
+}
+
+(function() {
+    var x = document.getElementsByClassName("toCombine");
+    foreach(element in x) {
+    }
+})();
+</script>
+</body>
+</html>
