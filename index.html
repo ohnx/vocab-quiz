@@ -177,7 +177,7 @@ a:hover {
 </form>
 <h2>Presets</h2>
 <p>Use some of the preset words from <a href="http://www.majortests.com/sat/wordlist.php">http://www.majortests.com/sat/wordlist.php</a>:</p>
-<p><ul class="presetlist"> <!-- Laziness level: over 9000 -->
+<p><ul class="presetlist"> 
     <li id="preset01">Words from Test 01</li>
     <li id="preset02">Words from Test 02</li>
     <li id="preset03">Words from Test 03</li>
@@ -188,6 +188,7 @@ a:hover {
     <li id="preset08">Words from Test 08</li>
     <li id="preset09">Words from Test 09</li>
     <li id="preset10">Words from Test 10</li>
+    <li id="presetAll">Words from Everything</li>
 </ul></p>
 </div>
 <div id="loading">Loading...</div>
@@ -422,6 +423,7 @@ function changeFile() {
     document.getElementById("preset08").addEventListener("click", function(){presetChoice("08");}, false);
     document.getElementById("preset09").addEventListener("click", function(){presetChoice("09");}, false);
     document.getElementById("preset10").addEventListener("click", function(){presetChoice("10");}, false);
+    document.getElementById("presetAll").addEventListener("click", function(){presetChoice("");}, false);
     document.getElementById("nextBtn").addEventListener("click", getWord, false);
     document.getElementById("resetBtn").addEventListener("click", resetStats, false);
     var savedURL = localStorage.getItem('lastURL') || "";
