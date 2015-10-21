@@ -1,16 +1,16 @@
 <html>
 <head><title>Combine</title></head>
 <body>
-<div id="vocab01.json" class="toCombine"></div>
-<div id="vocab02.json" class="toCombine"></div>
-<div id="vocab03.json" class="toCombine"></div>
-<div id="vocab04.json" class="toCombine"></div>
-<div id="vocab05.json" class="toCombine"></div>
-<div id="vocab06.json" class="toCombine"></div>
-<div id="vocab07.json" class="toCombine"></div>
-<div id="vocab08.json" class="toCombine"></div>
-<div id="vocab09.json" class="toCombine"></div>
-<div id="vocab10.json" class="toCombine"></div>
+<pre id="vocab01.json" class="toCombine"></pre>
+<pre id="vocab02.json" class="toCombine"></pre>
+<pre id="vocab03.json" class="toCombine"></pre>
+<pre id="vocab04.json" class="toCombine"></pre>
+<pre id="vocab05.json" class="toCombine"></pre>
+<pre id="vocab06.json" class="toCombine"></pre>
+<pre id="vocab07.json" class="toCombine"></pre>
+<pre id="vocab08.json" class="toCombine"></pre>
+<pre id="vocab09.json" class="toCombine"></pre>
+<pre id="vocab10.json" class="toCombine"></pre>
 <script>
 function sendRequest(currVal) {
     var req = currVal.id;
@@ -18,7 +18,7 @@ function sendRequest(currVal) {
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4) {
             if (xmlHttp.status == 200) {
-                currVal.innerHTML = xmlHttp.responseText;
+                currVal.innerHTML = xmlHttp.responseText.splice(2, -2) + ", ";
             }
         }
     };
