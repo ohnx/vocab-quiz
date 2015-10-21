@@ -28,8 +28,8 @@ function sendRequest(currVal) {
 
 (function() {
     var x = document.getElementsByClassName("toCombine");
-    for(var thing in x) {
-        sendRequest(thing);
+    for(var i=0; i<x.length; i++) {
+        sendRequest(x[i]);
     }
 })();
 </script>
