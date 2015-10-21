@@ -225,6 +225,7 @@ var pts = 0||0;
 var qpts = 100||0;
 var tries = 0;
 var correct = 0;
+var reverseThreshold = 0.7;
 
 // Array random element function
 Array.prototype.randomElement = function() {
@@ -296,6 +297,8 @@ function qPick(choice) {
 
 function getWord() {
     // yay autocompleted variable names
+    var isReverse = Math.random()>reverseThreshold;
+
     var randomIndex = Math.floor(Math.random() * questionsArray.length);
     var randomlyPickedElement = questionsArray[randomIndex];
     // set visible
@@ -309,16 +312,28 @@ function getWord() {
     gotRight = false;
     alreadyAnswered = [0,0,0,0];
     // set new word and choices
-    document.getElementById("qword").innerHTML = randomlyPickedElement.word;
+    if(isReverse) document.getElementById("qword").innerHTML = randomlyPickedElement.definition;
+    else document.getElementById("qword").innerHTML = randomlyPickedElement.word;
     rightAnswerNum = Math.floor(Math.random() * 3) + 1;
     
     for(var i=1; i<=4; i++) {
-        if(i == rightAnswerNum)
-            document.getElementById("qchoice"+i).innerHTML =
-            randomlyPickedElement.definition;
-        else
-            document.getElementById("qchoice"+i).innerHTML =
-            questionsArray.randomElementThatIsntThis(randomIndex).definition;
+        if(i == rightAnswerNum) {
+            if(isReverse) {
+                document.getElementById("qchoice"+i).innerHTML =
+                randomlyPickedElement.word;
+            } else {
+                document.getElementById("qchoice"+i).innerHTML =
+                randomlyPickedElement.definition;
+            }
+        } else {
+            if(isReverse) {
+                document.getElementById("qchoice"+i).innerHTML =
+                questionsArray.randomElementThatIsntThis(randomIndex).word;
+            } else {
+                document.getElementById("qchoice"+i).innerHTML =
+                questionsArray.randomElementThatIsntThis(randomIndex).definition;
+            }
+        }
         document.getElementById("qchoice"+i).className = "choice";
     }
 }
