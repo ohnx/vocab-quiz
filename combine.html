@@ -28,7 +28,9 @@ function sendRequest(currVal) {
 
 (function() {
     var x = document.getElementsByClassName("toCombine");
-    x.forEach(sendRequest);
+    for(var thing in x) {
+        sendRequest(thing);
+    }
 })();
 </script>
 </body>
