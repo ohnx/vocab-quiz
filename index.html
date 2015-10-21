@@ -167,6 +167,15 @@ a:hover {
 <input type="text" id="fname" name="fname" />
 <input id="subBtn" type="submit" name="submit" />
 </form>
+<h2>Presets</h2>
+<p>Use some of the preset words from <a href="http://www.majortests.com/sat/wordlist.php">http://www.majortests.com/sat/wordlist.php</a>:</p>
+<p><ul>
+    <li id="preset01">Words from Test 01</li>
+    <li id="preset02">Words from Test 02</li>
+    <li id="preset03">Words from Test 03</li>
+    <li id="preset04">Words from Test 04</li>
+    <li id="preset05">Words from Test 05</li>
+</ul></p>
 </div>
 <div id="loading">Loading...</div>
 <div id="question">
@@ -226,6 +235,12 @@ function updateStatsBar() {
     document.getElementById("percentage").innerHTML = percentage<=100?percentage:0;
 }
 
+function presetChoice(number) {
+    var choiceJSONId = (number<10)?(number+""):("0"+number);
+    currentURL = "vocab"+choiceJSONId+".json";
+    document.getElementById("fname").value = currentURL;
+    getFile();
+}
 
 function resetStats() {
     pts = 0;
@@ -384,6 +399,11 @@ function changeFile() {
     document.getElementById("qchoice2").addEventListener("click", function(){qPick(2);}, false);
     document.getElementById("qchoice3").addEventListener("click", function(){qPick(3);}, false);
     document.getElementById("qchoice4").addEventListener("click", function(){qPick(4);}, false);
+    document.getElementById("preset01").addEventListener("click", function(){presetChoice(1);}, false);
+    document.getElementById("preset02").addEventListener("click", function(){presetChoice(2);}, false);
+    document.getElementById("preset03").addEventListener("click", function(){presetChoice(3);}, false);
+    document.getElementById("preset04").addEventListener("click", function(){presetChoice(4);}, false);
+    document.getElementById("preset05").addEventListener("click", function(){presetChoice(5);}, false);
     document.getElementById("nextBtn").addEventListener("click", getWord, false);
     document.getElementById("resetBtn").addEventListener("click", resetStats, false);
     var savedURL = localStorage.getItem('lastURL') || "";
