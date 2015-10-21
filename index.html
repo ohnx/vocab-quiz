@@ -236,8 +236,8 @@ function updateStatsBar() {
 }
 
 function presetChoice(number) {
-    var choiceJSONId = (number<10)?(number.toString()):("0"+number.toString());
-    currentURL = "vocab"+choiceJSONId+".json";
+    var choiceJSONId = number||"";
+    currentURL = "vocab"+choiceJSONId.toString()+".json";
     document.getElementById("fname").value = currentURL;
     getFile();
 }
@@ -399,11 +399,11 @@ function changeFile() {
     document.getElementById("qchoice2").addEventListener("click", function(){qPick(2);}, false);
     document.getElementById("qchoice3").addEventListener("click", function(){qPick(3);}, false);
     document.getElementById("qchoice4").addEventListener("click", function(){qPick(4);}, false);
-    document.getElementById("preset01").addEventListener("click", function(){presetChoice(1);}, false);
-    document.getElementById("preset02").addEventListener("click", function(){presetChoice(2);}, false);
-    document.getElementById("preset03").addEventListener("click", function(){presetChoice(3);}, false);
-    document.getElementById("preset04").addEventListener("click", function(){presetChoice(4);}, false);
-    document.getElementById("preset05").addEventListener("click", function(){presetChoice(5);}, false);
+    document.getElementById("preset01").addEventListener("click", function(){presetChoice("01");}, false);
+    document.getElementById("preset02").addEventListener("click", function(){presetChoice("02");}, false);
+    document.getElementById("preset03").addEventListener("click", function(){presetChoice("03");}, false);
+    document.getElementById("preset04").addEventListener("click", function(){presetChoice("04");}, false);
+    document.getElementById("preset05").addEventListener("click", function(){presetChoice("05");}, false);
     document.getElementById("nextBtn").addEventListener("click", getWord, false);
     document.getElementById("resetBtn").addEventListener("click", resetStats, false);
     var savedURL = localStorage.getItem('lastURL') || "";
