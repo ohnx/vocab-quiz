@@ -249,9 +249,8 @@ function updateStatsBar() {
     document.getElementById("percentage").innerHTML = percentage<=100?percentage:0;
 }
 
-function presetChoice(number) {
-    var choiceJSONId = number||"";
-    currentURL = "vocab"+choiceJSONId.toString()+".json";
+function presetChoice(id) {
+    currentURL = "vocab"+id+".json";
     document.getElementById("fname").value = currentURL;
     getFile();
 }
