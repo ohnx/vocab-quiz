@@ -12,16 +12,23 @@
 <div id="vocab09.json" class="toCombine"></div>
 <div id="vocab10.json" class="toCombine"></div>
 <script>
-function combine() {
-    var dataIn = document.getElementById("from").value;
-    var dataOut = dataIn.replace(/\* (.*) - (.*)/gmi, "{\"word\":\"$1\", \"definition\":\"$2\"},");
-    document.getElementById("to").value = "[\n"+dataOut.slice(0, -1)+"\n]";
+function sendRequest(currVal) {
+    var req = currVal.id;
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                currVal.innerHTML = xmlHttp.responseText;
+            }
+        }
+    };
+    xmlHttp.open("GET", req, true); 
+    xmlHttp.send();
 }
 
 (function() {
     var x = document.getElementsByClassName("toCombine");
-    foreach(element in x) {
-    }
+    x.forEach(sendRequest);
 })();
 </script>
 </body>
