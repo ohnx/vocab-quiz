@@ -5,11 +5,17 @@
 <textarea id="from"></textarea><br />
 <h2>To</h2>
 <textarea id="to"></textarea><br />
-<a href="javascript:;" onclick="convert();">Convert</a>
+<a href="javascript:;" onclick="convertA();">ConvertA (Word online)</a>
+<a href="javascript:;" onclick="convertB();">ConvertB (http://www.majortests.com/sat)</a>
 <script>
-function convert() {
+function convertA() {
     var dataIn = document.getElementById("from").value;
     var dataOut = dataIn.replace(/\* (.*) - (.*)/gmi, "{\"word\":\"$1\", \"definition\":\"$2\"},");
+    document.getElementById("to").value = dataOut;
+}
+function convertB() {
+    var dataIn = document.getElementById("from").value;
+    var dataOut = dataIn.replace(/(.*)	(.*)/gmi, "{\"word\":\"$1\", \"definition\":\"$2\"},");
     document.getElementById("to").value = dataOut;
 }
 </script>

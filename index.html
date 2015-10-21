@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400);
 * {
@@ -19,6 +20,7 @@ html {
     background: linear-gradient(rgba(241,231,103,1) 0%, rgba(254,182,69,1) 100%);
 }
 .card {
+    box-sizing: border-box;
     max-width: 700px;
     width: 100%;
     margin: 4em auto 0 auto;
@@ -88,8 +90,8 @@ a:hover {
 .choice {
     box-sizing: border-box;
     font-size: 120%;
-    margin: 2px;
-    padding: 2px;
+    padding: 4px;
+    margin: 3px 3px 9px 3px;
     border-radius: 1px;
     border: 1px solid black;
 }
@@ -136,6 +138,12 @@ a:hover {
 
 #stats {
     display: none;
+}
+
+@media (max-width: 600px) {
+.mgmntbtns {
+    float: none;
+}
 }
 </style>
 <title>Quiz</title>
