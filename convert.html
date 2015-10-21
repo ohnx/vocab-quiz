@@ -7,16 +7,22 @@
 <textarea id="to" rows=10 cols=20></textarea><br />
 <a href="javascript:;" onclick="convertA();">ConvertA (Word online)</a>
 <a href="javascript:;" onclick="convertB();">ConvertB (http://www.majortests.com/sat)</a>
+<a href="javascript:;" onclick="convertC();">ConvertC (NYI)</a>
 <script>
 function convertA() {
     var dataIn = document.getElementById("from").value;
     var dataOut = dataIn.replace(/\* (.*) - (.*)/gmi, "{\"word\":\"$1\", \"definition\":\"$2\"},");
-    document.getElementById("to").value = dataOut;
+    document.getElementById("to").value = "["+dataOut.substring(0, dataOut.length - 1);+"]";
 }
 function convertB() {
     var dataIn = document.getElementById("from").value;
     var dataOut = dataIn.replace(/(.*)	(.*)/gmi, "{\"word\":\"$1\", \"definition\":\"$2\"},");
-    document.getElementById("to").value = dataOut;
+    document.getElementById("to").value = "["+dataOut.substring(0, dataOut.length - 1);+"]";
+}
+function convertB() {
+    var dataIn = document.getElementById("from").value;
+    var dataOut = dataIn.replace(/(.*) - (.*)/gmi, "{\"word\":\"$1\", \"definition\":\"$2\"},");
+    document.getElementById("to").value = "["+dataOut.substring(0, dataOut.length - 1);+"]";
 }
 </script>
 </body>
