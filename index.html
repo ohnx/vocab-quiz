@@ -87,6 +87,11 @@ a:hover {
     text-decoration: underline;
 }
 
+.presetlist {
+    list-style-type:none;
+    cursor: pointer;
+}
+
 .choice {
     box-sizing: border-box;
     font-size: 120%;
@@ -169,12 +174,17 @@ a:hover {
 </form>
 <h2>Presets</h2>
 <p>Use some of the preset words from <a href="http://www.majortests.com/sat/wordlist.php">http://www.majortests.com/sat/wordlist.php</a>:</p>
-<p><ul style="list-style-type:none;"> <!-- Laziness level: over 9000 -->
+<p><ul class="presetlist"> <!-- Laziness level: over 9000 -->
     <li id="preset01">Words from Test 01</li>
     <li id="preset02">Words from Test 02</li>
     <li id="preset03">Words from Test 03</li>
     <li id="preset04">Words from Test 04</li>
     <li id="preset05">Words from Test 05</li>
+    <li id="preset06">Words from Test 06</li>
+    <li id="preset07">Words from Test 07</li>
+    <li id="preset08">Words from Test 08</li>
+    <li id="preset09">Words from Test 09</li>
+    <li id="preset10">Words from Test 10</li>
 </ul></p>
 </div>
 <div id="loading">Loading...</div>
@@ -404,6 +414,11 @@ function changeFile() {
     document.getElementById("preset03").addEventListener("click", function(){presetChoice("03");}, false);
     document.getElementById("preset04").addEventListener("click", function(){presetChoice("04");}, false);
     document.getElementById("preset05").addEventListener("click", function(){presetChoice("05");}, false);
+    document.getElementById("preset06").addEventListener("click", function(){presetChoice("06");}, false);
+    document.getElementById("preset07").addEventListener("click", function(){presetChoice("07");}, false);
+    document.getElementById("preset08").addEventListener("click", function(){presetChoice("08");}, false);
+    document.getElementById("preset09").addEventListener("click", function(){presetChoice("09");}, false);
+    document.getElementById("preset10").addEventListener("click", function(){presetChoice("10");}, false);
     document.getElementById("nextBtn").addEventListener("click", getWord, false);
     document.getElementById("resetBtn").addEventListener("click", resetStats, false);
     var savedURL = localStorage.getItem('lastURL') || "";
