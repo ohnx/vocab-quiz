@@ -208,9 +208,8 @@ ul {
 <div id="stats">
     <h1>Stats</h1>
     <div class="choice">Points: <b id="statsPts"></b></div>
-    <div class="choice">Questions Answered: <b id="statsAnswered"></b></div>
     <div class="choice">Average Points per Question: <b id="statsPPQ"></b></div>
-    <div class="choice">Correct Answers: <b id="statsCorrect"></b></div>
+    <div class="choice">Questions Answered/Correct Answers: <b id="statsCorrect"></b></div>
     <div class="choice">Incorrect Answers: <b id="statsIncorrect"></b></div>
     <div class="choice">Total Answers: <b id="statsTotal"></b></div>
     <div class="choice">Percentage: <b id="statsPercentage"></b>%</div>
@@ -221,6 +220,14 @@ ul {
 </div>
 </div>
 <script>
+// SETTINGS
+var maxWords = 30;
+// ip or uat, that is the question
+var chanceForHardWord = 0.79853562951413;
+// so precise
+var reverseThreshold = 0.4549;
+
+// ACTUAL CODE
 var connectTimeout;
 var questionsArray;
 var currentURL;
@@ -231,12 +238,8 @@ var pts = 0||0;
 var qpts = 100||0;
 var tries = 0;
 var correct = 0;
-var answered = 0;
-// so precise
-var reverseThreshold = 0.4549;
 var currentWord;
 var hardWords = {undefined:0};
-var maxWords = 30;
 
 // Array random element function
 Array.prototype.randomElement = function() {
@@ -252,12 +255,12 @@ Array.prototype.randomElementThatIsntThis = function(notThis) {
     return this[random];
 };
 
+// update display and localstorages
 function updateStatsBar() {
     localStorage.setItem('lastPts', pts);
     document.getElementById("pts").innerHTML = pts;
     localStorage.setItem('lastTries', tries);
     localStorage.setItem('lastCorrect', correct);
-    localStorage.setItem('lastAnswered', answered);
     var percentage = Math.floor(correct/tries*100);
     document.getElementById("percentage").innerHTML = percentage<=100?percentage:0;
 }
@@ -266,17 +269,18 @@ function updateHardWords() {
     localStorage.setItem('lastHardWords', JSON.stringify(hardWords));
 }
 
+// lol terrible hack
 function presetChoice(id) {
     currentURL = "vocab"+id+".json";
     document.getElementById("fname").value = currentURL;
     getFile();
 }
 
+// reset stats
 function resetStats() {
     pts = 0;
     correct = 0;
     tries = 0;
-    answered = 0;
     hardWords = {undefined:0};
     currentWord = null;
     updateHardWords();
@@ -284,6 +288,7 @@ function resetStats() {
     showStats();
 }
 
+// ohnx's cobbled-together thing
 function sortWords() {
     var sortedArray = [];
     for (var word in hardWords)
@@ -293,6 +298,7 @@ function sortWords() {
     return sortedArray.slice(0, maxWords);
 }
 
+// show stats
 function showStats() {
     var topWords = sortWords();
     var statsString = "";
@@ -307,8 +313,7 @@ function showStats() {
     document.getElementById("loading").style.display = "none";
     document.getElementById("stats").style.display = "block";
     document.getElementById("statsPts").innerHTML = pts;
-    document.getElementById("statsAnswered").innerHTML = answered;
-    document.getElementById("statsPPQ").innerHTML = pts/answered;
+    document.getElementById("statsPPQ").innerHTML = pts/correct;
     document.getElementById("statsCorrect").innerHTML = correct;
     document.getElementById("statsIncorrect").innerHTML = tries-correct;
     document.getElementById("statsTotal").innerHTML = tries;
@@ -316,6 +321,7 @@ function showStats() {
     document.getElementById("statsWords").innerHTML = statsString==""?"None!":statsString;
 }
 
+// ohnx's amazing scoring system and hard word determination algorithm
 function qPick(choice) {
     if(alreadyAnswered[choice-1] || gotRight) return;
 
@@ -333,7 +339,6 @@ function qPick(choice) {
         pts = parseInt(pts) + parseInt(qpts);
         qpts = 100||0;
         correct++;
-        answered++;
     } else {
         document.getElementById("qchoice"+choice).className += " incorrect";
         qpts = ((qpts-50)>=0)?(qpts-50):qpts||0;
@@ -343,12 +348,34 @@ function qPick(choice) {
     updateStatsBar();
 }
 
+// ohnx's amazing algorithm to find a word
 function getWord() {
     // yay autocompleted variable names
     var isReverse = Math.random()>reverseThreshold;
-
-    var randomIndex = Math.floor(Math.random() * questionsArray.length);
-    var randomlyPickedElement = questionsArray[randomIndex];
+    var isHardWord = Math.random()<=chanceForHardWord;
+    var randomlyPickedElement, randomIndex;
+    
+    if(isHardWord) {
+        var topWords = sortWords();
+        var objIndex = Math.floor(Math.random() * topWords.length);
+        try {
+            if(topWords[objIndex][1] <= 0 || topWords[objIndex][0] == "undefined") {
+                randomIndex = Math.floor(Math.random() * questionsArray.length);
+                randomlyPickedElement = questionsArray[randomIndex];
+            } else {
+                randomlyPickedElement =
+                questionsArray.filter(function(obj) {return obj.word == topWords[objIndex][0];})[0];
+            }
+        } catch (e) {
+             // yay code repition
+            randomIndex = Math.floor(Math.random() * questionsArray.length);
+            randomlyPickedElement = questionsArray[randomIndex];
+        }
+    } else {
+        // yay code repition
+        randomIndex = Math.floor(Math.random() * questionsArray.length);
+        randomlyPickedElement = questionsArray[randomIndex];
+    }
     currentWord = randomlyPickedElement.word;
 
     // set visible
@@ -388,6 +415,7 @@ function getWord() {
     }
 }
 
+// web callbacks
 function errmsg(msg, desc) {
     document.getElementById("errmsg").innerHTML = msg;
     document.getElementById("errdesc").innerHTML = desc;
@@ -423,6 +451,7 @@ function verifyJSONFile(text) {
     getWord();
 }
 
+// send web request
 function getFile(e) {
     if(e) e.preventDefault();
     document.getElementById("question").style.display = "none";
@@ -467,7 +496,7 @@ function changeFile() {
 }
 
 (function() {
-    // DOM ready
+    // DOM ready, add listeners
     document.getElementById("sourceURL").addEventListener("click", getWord, false);
     document.getElementById("statsBtn").addEventListener("click", showStats, false);
     document.getElementById("subBtn").addEventListener("click", getFile, false);
@@ -490,6 +519,8 @@ function changeFile() {
     document.getElementById("presetAll").addEventListener("click", function(){presetChoice("All");}, false);
     document.getElementById("nextBtn").addEventListener("click", getWord, false);
     document.getElementById("resetBtn").addEventListener("click", resetStats, false);
+    
+    // read things from storage and check their values
     var savedURL = localStorage.getItem('lastURL') || "";
     var savedStr = localStorage.getItem('lastJSON') || "";
     var motsDifficiles = localStorage.getItem('lastHardWords') || "";
@@ -497,7 +528,6 @@ function changeFile() {
     pts = localStorage.getItem('lastPts') || 0;
     tries = localStorage.getItem('lastTries') || 0;
     correct = localStorage.getItem('lastCorrect') || 0;
-    answered = localStorage.getItem('lastAnswered') || 0;
     updateStatsBar();
     
     try {
