@@ -205,6 +205,8 @@ a:hover {
 <div id="stats">
     <h1>Stats</h1>
     <div class="choice">Points: <b id="statsPts"></b></div>
+    <div class="choice">Questions Answered: <b id="statsAnswered"></b></div>
+    <div class="choice">Average Points per Question: <b id="statsPPQ"></b></div>
     <div class="choice">Correct Answers: <b id="statsCorrect"></b></div>
     <div class="choice">Incorrect Answers: <b id="statsIncorrect"></b></div>
     <div class="choice">Total Answers: <b id="statsTotal"></b></div>
@@ -225,6 +227,7 @@ var pts = 0||0;
 var qpts = 100||0;
 var tries = 0;
 var correct = 0;
+var answered = 0;
 // so precise
 var reverseThreshold = 0.6549;
 
@@ -247,6 +250,7 @@ function updateStatsBar() {
     document.getElementById("pts").innerHTML = pts;
     localStorage.setItem('lastTries', tries);
     localStorage.setItem('lastCorrect', correct);
+    localStorage.setItem('lastAnswered', answered);
     var percentage = Math.floor(correct/tries*100);
     document.getElementById("percentage").innerHTML = percentage<=100?percentage:0;
 }
@@ -271,6 +275,8 @@ function showStats() {
     document.getElementById("loading").style.display = "none";
     document.getElementById("stats").style.display = "block";
     document.getElementById("statsPts").innerHTML = pts;
+    document.getElementById("statsAnswered").innerHTML = answered;
+    document.getElementById("statsPPQ").innerHTML = pts/answered;
     document.getElementById("statsCorrect").innerHTML = correct;
     document.getElementById("statsIncorrect").innerHTML = tries-correct;
     document.getElementById("statsTotal").innerHTML = tries;
@@ -289,6 +295,7 @@ function qPick(choice) {
         pts = parseInt(pts) + parseInt(qpts);
         qpts = 100||0;
         correct++;
+        answered++;
     } else {
         document.getElementById("qchoice"+choice).className += " incorrect";
         qpts = ((qpts-50)>=0)?(qpts-50):qpts||0;
@@ -447,6 +454,7 @@ function changeFile() {
     pts = localStorage.getItem('lastPts') || 0;
     tries = localStorage.getItem('lastTries') || 0;
     correct = localStorage.getItem('lastCorrect') || 0;
+    answered = localStorage.getItem('lastAnswered') || 0;
     updateStatsBar();
     
     // It's empty, don't have to give error
