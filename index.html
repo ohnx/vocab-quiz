@@ -223,11 +223,12 @@ ul {
 // SETTINGS
 var maxWords = 30;
 // ip or uat, that is the question
-var chanceForHardWord = 0.79853562951413;
+var chanceForHardWord = 0.53562951413;
 // so precise
 var reverseThreshold = 0.4549;
 
 // ACTUAL CODE
+// lol i cant group vars together cos i'm a js n00b
 var connectTimeout;
 var questionsArray;
 var currentURL;
@@ -240,6 +241,13 @@ var tries = 0;
 var correct = 0;
 var currentWord;
 var hardWords = {undefined:0};
+
+// so many ternary operators in this
+// i love them
+// also code efficiency level is like terrible
+// WARNING - if you actually care about code efficiency in JS,
+//            PLEASE DO NOT LOOK AT THE FOLLOWING CODE or else you might get
+//            a heart attack
 
 // Array random element function
 Array.prototype.randomElement = function() {
@@ -349,6 +357,7 @@ function qPick(choice) {
 }
 
 // ohnx's amazing algorithm to find a word
+// the time complexity of this is like O(n^Infinity)
 function getWord() {
     // yay autocompleted variable names
     var isReverse = Math.random()>reverseThreshold;
@@ -357,20 +366,18 @@ function getWord() {
     
     if(isHardWord) {
         var topWords = sortWords();
-        var objIndex = Math.floor(Math.random() * topWords.length);
-        try {
-            if(topWords[objIndex][1] <= 0 || topWords[objIndex][0] == "undefined") {
-                randomIndex = Math.floor(Math.random() * questionsArray.length);
-                randomlyPickedElement = questionsArray[randomIndex];
-            } else {
-                randomlyPickedElement =
-                questionsArray.filter(function(obj) {return obj.word == topWords[objIndex][0];})[0];
-            }
-        } catch (e) {
-             // yay code repition
+        for (var i=0; i<topWords.length; i++) {
+            // hit the limit
+            if(topWords[i][0] == "undefined") break;
+        }
+        // give the user a chance to build up some hard words
+        if(i<5) {
             randomIndex = Math.floor(Math.random() * questionsArray.length);
             randomlyPickedElement = questionsArray[randomIndex];
         }
+        var objIndex = Math.floor(Math.random() * i);
+        randomlyPickedElement =
+        questionsArray.filter(function(obj) {return obj.word == topWords[objIndex][0];})[0];
     } else {
         // yay code repition
         randomIndex = Math.floor(Math.random() * questionsArray.length);
