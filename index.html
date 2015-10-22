@@ -374,10 +374,11 @@ function getWord() {
         if(i<5) {
             randomIndex = Math.floor(Math.random() * questionsArray.length);
             randomlyPickedElement = questionsArray[randomIndex];
+        } else {
+            var objIndex = Math.floor(Math.random() * i);
+            randomlyPickedElement =
+            questionsArray.filter(function(obj) {return obj.word == topWords[objIndex][0];})[0];
         }
-        var objIndex = Math.floor(Math.random() * i);
-        randomlyPickedElement =
-        questionsArray.filter(function(obj) {return obj.word == topWords[objIndex][0];})[0];
     } else {
         // yay code repition
         randomIndex = Math.floor(Math.random() * questionsArray.length);
