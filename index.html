@@ -312,7 +312,7 @@ function showStats() {
     var statsString = "";
     for (var i=0; i<topWords.length; i++) {
         // hit the limit
-        if(topWords[i][0] == "undefined") break;
+        if(topWords[i][0] == "undefined" || topWords[i][1] < 1) break;
         statsString += topWords[i][0] + ", ";
     }
     statsString = statsString.slice(0, -2);
