@@ -88,8 +88,11 @@ a:hover {
 }
 
 .presetlist {
-    list-style-type:none;
     cursor: pointer;
+}
+
+ul {
+    list-style-type:none;
 }
 
 .choice {
@@ -211,6 +214,7 @@ a:hover {
     <div class="choice">Incorrect Answers: <b id="statsIncorrect"></b></div>
     <div class="choice">Total Answers: <b id="statsTotal"></b></div>
     <div class="choice">Percentage: <b id="statsPercentage"></b>%</div>
+    <div class="choice">Top problematic words: <span id="statsWords">None!</span></div>
     <div class="nextBtnwrapper">
         <div id="resetBtn" class="btn">Reset Stats</div>
     </div>
@@ -231,7 +235,8 @@ var answered = 0;
 // so precise
 var reverseThreshold = 0.4549;
 var currentWord;
-var hardWords = {"none":0};
+var hardWords = {undefined:0};
+var maxWords = 30;
 
 // Array random element function
 Array.prototype.randomElement = function() {
@@ -272,13 +277,31 @@ function resetStats() {
     correct = 0;
     tries = 0;
     answered = 0;
-    hardWords = {"none":0};
+    hardWords = {undefined:0};
     currentWord = null;
+    updateHardWords();
     updateStatsBar();
     showStats();
 }
 
+function sortWords() {
+    var sortedArray = [];
+    for (var word in hardWords)
+        if (Object.prototype.hasOwnProperty.call(hardWords, word))
+            sortedArray.push([word, hardWords[word]]);
+    sortedArray.sort(function(a, b) {return b[1] - a[1];});
+    return sortedArray.slice(0, maxWords);
+}
+
 function showStats() {
+    var topWords = sortWords();
+    var statsString = "";
+    for (var i=0; i<topWords.length; i++) {
+        // hit the limit
+        if(topWords[i][0] == "undefined") break;
+        statsString += topWords[i][0] + ", ";
+    }
+    statsString = statsString.slice(0, -2);
     document.getElementById("errjsonfile").style.display = "none";
     document.getElementById("question").style.display = "none";
     document.getElementById("loading").style.display = "none";
@@ -290,6 +313,7 @@ function showStats() {
     document.getElementById("statsIncorrect").innerHTML = tries-correct;
     document.getElementById("statsTotal").innerHTML = tries;
     document.getElementById("statsPercentage").innerHTML = correct/tries*100;
+    document.getElementById("statsWords").innerHTML = statsString==""?"None!":statsString;
 }
 
 function qPick(choice) {
@@ -301,6 +325,11 @@ function qPick(choice) {
         document.getElementById("qchoice"+choice).className += " correct";
         gotRight = true;
         document.getElementById("nextBtn").style.display = "inline-block";
+        if(qpts == 100) {
+            hardWords[currentWord] = (hardWords[currentWord] == 0)?
+            (hardWords[currentWord] - 1):0;
+            updateHardWords();
+        }
         pts = parseInt(pts) + parseInt(qpts);
         qpts = 100||0;
         correct++;
@@ -308,7 +337,8 @@ function qPick(choice) {
     } else {
         document.getElementById("qchoice"+choice).className += " incorrect";
         qpts = ((qpts-50)>=0)?(qpts-50):qpts||0;
-        hardWords[currentWord]++;
+        hardWords[currentWord] = (hardWords[currentWord]>=0)?(hardWords[currentWord]+1):0;
+        updateHardWords();
     }
     updateStatsBar();
 }
@@ -473,7 +503,7 @@ function changeFile() {
     try {
         hardWords = JSON.parse(motsDifficiles);
     } catch (e) {
-        hardWords = {"none":0};
+        hardWords = {undefined:0};
     }
     
     // It's empty, don't have to give error
