@@ -1,6 +1,7 @@
-<html>
+<html lang="en">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz</title>
 <style>
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400);
 * {
@@ -151,26 +152,32 @@ ul {
     display: none;
 }
 
+#saveInfo {
+    display: none;
+}
+
 @media (max-width: 600px) {
 .mgmntbtns {
     float: none;
 }
 }
 </style>
-<title>Quiz</title>
 </head>
 <body>
+<!-- info bar -->
 <div class="infobar">
     <div id="sourceURL"></div>
     <div class="mgmntbtns">
         <b id="pts">0</b> pts &middot; 
         <b id="percentage">0</b>% &middot; 
         <a id="statsBtn" href="javascript:;">Stats</a> &middot; 
-        <a id="changefileBtn" href="javascript:;">Change JSON file</a> &middot; 
-        <a id="syncfileBtn" href="javascript:;">Resync JSON file</a>
+        <a id="changefileBtn" href="javascript:;">Change Quiz</a> &middot; 
+        <a id="saveBtn" href="javascript:;">Load/Save</a>
     </div>
 </div>
+<!-- card -->
 <div class="card">
+<!-- error message -->
 <div id="errjsonfile">
 <h1 id="errmsg">No file specified</h1>
 <p id="errdesc">Please enter the location for a quiz JSON file</p>
@@ -194,7 +201,9 @@ ul {
     <li id="presetAll">Words from Everything</li>
 </ul></p>
 </div>
+<!-- loading message -->
 <div id="loading">Loading...</div>
+<!-- question -->
 <div id="question">
     <h1 id="qword"></h1>
     <div id="qchoice1" class="choice">A</div>
@@ -205,6 +214,7 @@ ul {
         <div id="nextBtn" class="btn">Next</div>
     </div>
 </div>
+<!-- stats -->
 <div id="stats">
     <h1>Stats</h1>
     <div class="choice">Points: <b id="statsPts"></b></div>
@@ -218,7 +228,18 @@ ul {
         <div id="resetBtn" class="btn">Reset Stats</div>
     </div>
 </div>
+<!-- save info -->
+<div id="saveInfo">
+    <h1>Load/Save stats</h1>
+    <p>Stats are automatically saved locally. However, they can be transferred from computer to computer with save codes.</p>
+    <p>Be forewarned: When loading stats from a save code, your old stats will be cleared.</p>
+    <form>
+        <input type="text" id="statCode" name="statCode" />
+        <input id="loadBtn" type="submit" name="loadBtn" value="Load" />
+    </form>
 </div>
+</div>
+<!-- code -->
 <script>
 // SETTINGS
 var maxWords = 30;
@@ -312,7 +333,7 @@ function showStats() {
     var statsString = "";
     for (var i=0; i<topWords.length; i++) {
         // hit the limit
-        if(topWords[i][0] == "undefined") break;
+        if(topWords[i][0] == "undefined" || topWords[i][1] < 1) break;
         statsString += topWords[i][0] + ", ";
     }
     statsString = statsString.slice(0, -2);
@@ -320,6 +341,7 @@ function showStats() {
     document.getElementById("question").style.display = "none";
     document.getElementById("loading").style.display = "none";
     document.getElementById("stats").style.display = "block";
+    document.getElementById("saveInfo").style.display = "none";
     document.getElementById("statsPts").innerHTML = pts;
     document.getElementById("statsPPQ").innerHTML = pts/correct;
     document.getElementById("statsCorrect").innerHTML = correct;
@@ -340,10 +362,11 @@ function qPick(choice) {
         gotRight = true;
         document.getElementById("nextBtn").style.display = "inline-block";
         if(qpts == 100) {
-            hardWords[currentWord] = (hardWords[currentWord] == 0)?
-            (hardWords[currentWord] - 1):0;
+            hardWords[currentWord] = (hardWords[currentWord] == 0)?(hardWords[currentWord] - 1):0;
             updateHardWords();
         }
+        // I don't even know why, but this works.
+        // Otherwise, pts ends up being parsed a string somehow...
         pts = parseInt(pts) + parseInt(qpts);
         qpts = 100||0;
         correct++;
@@ -378,6 +401,7 @@ function getWord() {
             var objIndex = Math.floor(Math.random() * i);
             randomlyPickedElement =
             questionsArray.filter(function(obj) {return obj.word == topWords[objIndex][0];})[0];
+            console.log("Ooh! It's a hard word!");
         }
     } else {
         // yay code repition
@@ -391,6 +415,7 @@ function getWord() {
     document.getElementById("question").style.display = "block";
     document.getElementById("loading").style.display = "none";
     document.getElementById("stats").style.display = "none";
+    document.getElementById("saveInfo").style.display = "none";
     
     // reset everything
     document.getElementById("nextBtn").style.display = "none";
@@ -429,6 +454,7 @@ function errmsg(msg, desc) {
     document.getElementById("errdesc").innerHTML = desc;
     document.getElementById("errjsonfile").style.display = "block";
     document.getElementById("loading").style.display = "none";
+    document.getElementById("saveInfo").style.display = "none";
     currentURL = "None";
     document.getElementById("sourceURL").innerHTML = currentURL;
 }
@@ -455,6 +481,7 @@ function verifyJSONFile(text) {
     document.getElementById("question").style.display = "block";
     document.getElementById("loading").style.display = "none";
     document.getElementById("stats").style.display = "none";
+    document.getElementById("saveInfo").style.display = "none";
     document.getElementById("sourceURL").innerHTML = currentURL;
     getWord();
 }
@@ -466,6 +493,7 @@ function getFile(e) {
     document.getElementById("errjsonfile").style.display = "none";
     document.getElementById("stats").style.display = "none";
     document.getElementById("loading").style.display = "block";
+    document.getElementById("saveInfo").style.display = "none";
     var xmlHttp = new XMLHttpRequest();
     var timeout = function() {
         xmlHttp.abort();
@@ -498,9 +526,40 @@ function changeFile() {
     document.getElementById("question").style.display = "none";
     document.getElementById("loading").style.display = "none";
     document.getElementById("stats").style.display = "none";
+    document.getElementById("saveInfo").style.display = "none";
     document.getElementById("fname").value = currentURL;
-    document.getElementById("errmsg").innerHTML = "Enter JSON file";
+    document.getElementById("errmsg").innerHTML = "Enter quiz file";
     document.getElementById("errdesc").innerHTML = "Please enter the location for a quiz JSON file";
+}
+
+function saveToCode() {
+    document.getElementById("errjsonfile").style.display = "none";
+    document.getElementById("question").style.display = "none";
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("stats").style.display = "none";
+    document.getElementById("saveInfo").style.display = "block";
+    var tempObj = {lastURL: currentURL, lastJSON: JSON.stringify(questionsArray), lastHardWords: JSON.stringify(hardWords),
+    lastPts: pts, lastTries: tries, lastCorrect: correct};
+    document.getElementById("statCode").value = window.btoa(encodeURIComponent(JSON.stringify(tempObj)));
+}
+
+function loadFromCode(e) {
+    if(e) e.preventDefault();
+    try {
+        var tempObj = JSON.parse(decodeURIComponent(window.atob(document.getElementById("statCode").value)));
+        questionsArray = JSON.parse(tempObj.lastJSON);
+        hardWords = JSON.parse(tempObj.lastHardWords);
+    } catch (e) {
+        alert("There was an error parsing the save code. Nothing will happen.");
+        return;
+    }
+    currentURL = tempObj.lastURL;
+    pts = tempObj.lastPts;
+    tries = tempObj.lastTries;
+    correct = tempObj.lastCorrect;
+    updateHardWords();
+    updateStatsBar();
+    showStats();
 }
 
 (function() {
@@ -509,7 +568,8 @@ function changeFile() {
     document.getElementById("statsBtn").addEventListener("click", showStats, false);
     document.getElementById("subBtn").addEventListener("click", getFile, false);
     document.getElementById("changefileBtn").addEventListener("click", changeFile, false);
-    document.getElementById("syncfileBtn").addEventListener("click", getFile, false);
+    document.getElementById("saveBtn").addEventListener("click", saveToCode, false);
+    document.getElementById("loadBtn").addEventListener("click", loadFromCode, false);
     document.getElementById("qchoice1").addEventListener("click", function(){qPick(1);}, false);
     document.getElementById("qchoice2").addEventListener("click", function(){qPick(2);}, false);
     document.getElementById("qchoice3").addEventListener("click", function(){qPick(3);}, false);
