@@ -155,10 +155,22 @@ ul {
 #saveInfo {
     display: none;
 }
-
-@media (max-width: 600px) {
+.nl {
+    display: inline;
+}
+@media (max-width: 570px) {
 .mgmntbtns {
     float: none;
+}
+.nl {
+    clear: both;
+    display: block;
+}
+.mider {
+    display:none;
+}
+.scores {
+    float: right;
 }
 }
 </style>
@@ -168,11 +180,14 @@ ul {
 <div class="infobar">
     <div id="sourceURL"></div>
     <div class="mgmntbtns">
-        <b id="pts">0</b> pts &middot; 
-        <b id="percentage">0</b>% &middot; 
+        <span class="scores">
+            <b id="pts">0</b> pts &middot; 
+            <b id="percentage">0</b>% 
+        </span>
+        <div class="nl"><span class="mider">&middot; </span>
         <a id="statsBtn" href="javascript:;">Stats</a> &middot; 
         <a id="changefileBtn" href="javascript:;">Change Quiz</a> &middot; 
-        <a id="saveBtn" href="javascript:;">Load/Save</a>
+        <a id="saveBtn" href="javascript:;">Load/Save</a></div>
     </div>
 </div>
 <!-- card -->
@@ -559,17 +574,6 @@ function loadFromCode(e) {
     document.getElementById("qchoice2").addEventListener("click", function(){qPick(2);}, false);
     document.getElementById("qchoice3").addEventListener("click", function(){qPick(3);}, false);
     document.getElementById("qchoice4").addEventListener("click", function(){qPick(4);}, false);
-    document.getElementById("preset01").addEventListener("click", function(){presetChoice("01");}, false);
-    document.getElementById("preset02").addEventListener("click", function(){presetChoice("02");}, false);
-    document.getElementById("preset03").addEventListener("click", function(){presetChoice("03");}, false);
-    document.getElementById("preset04").addEventListener("click", function(){presetChoice("04");}, false);
-    document.getElementById("preset05").addEventListener("click", function(){presetChoice("05");}, false);
-    document.getElementById("preset06").addEventListener("click", function(){presetChoice("06");}, false);
-    document.getElementById("preset07").addEventListener("click", function(){presetChoice("07");}, false);
-    document.getElementById("preset08").addEventListener("click", function(){presetChoice("08");}, false);
-    document.getElementById("preset09").addEventListener("click", function(){presetChoice("09");}, false);
-    document.getElementById("preset10").addEventListener("click", function(){presetChoice("10");}, false);
-    document.getElementById("presetAll").addEventListener("click", function(){presetChoice("All");}, false);
     document.getElementById("nextBtn").addEventListener("click", getWord, false);
     document.getElementById("resetBtn").addEventListener("click", resetStats, false);
     
