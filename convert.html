@@ -29,7 +29,7 @@ function convertC() {
 function convertD() {
     var dataIn = document.getElementById("from").value;
     var dataOut = dataIn.replace(/(.*) – (.*)/gmi, "{\"word\":\"$1\", \"definition\":\"$2\"},");
-    dataOut = dataIn.replace(/(.*) - (.*)/gmi, "{\"word\":\"$1\", \"definition\":\"$2\"},");
+    dataOut = dataOut.replace(/(.*) - (.*)/gmi, "{\"word\":\"$1\", \"definition\":\"$2\"},");
     document.getElementById("to").value = "["+dataOut.substring(0, dataOut.length - 1)+"]";
 }
 </script>
